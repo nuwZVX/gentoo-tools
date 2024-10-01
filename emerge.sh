@@ -2,7 +2,7 @@
 #set -x
 trap "{ kill -s SIGTERM $$ ; exit 1; }" SIGINT SIGTERM
 
-# ver. 20240918
+# ver. 20241001
 
 function _color-off {
         echo -n -e "\033[0m"
@@ -15,6 +15,12 @@ function _color-grn {
 }
 function _color-wht {
         echo -n -e "\033[37m"
+}
+
+function _self-update {
+        if [[ -d ~/gentoo-tools/ ]]; then
+		cd ~/gentoo-tools/; git pull
+	fi
 }
 
 function _disable_distcc {
@@ -111,6 +117,8 @@ function _sync-portage {
                  printf "Completed.\n" && portage_synchronized=true
  }
 # START
+
+_self-update
 
 _color-wht; printf "Removing emerge resume history:\n"; _color-off
 emaint --fix cleanresume
