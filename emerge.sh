@@ -104,18 +104,15 @@ fi
 
 function _sync-portage {
                 _color-wht; printf "emain --auto sync\n"; _color-off
-                RC=1
-                ATTEMPT=0
-                while [ "$RC" -ne "0" ] || [ "$ATTEMPT" -le "3" ]; do
-                        emaint --auto sync
-                        RC=$?
-                        ATTEMPT=$((ATTEMPT+1))
-                done
-                if [ $RC -ne 0 ]; then
+                emaint --auto sync
+                RC=$?
+                if [[ $RC -ne 0 ]]; then
                         _color-red; printf "Portage sync failed.\n"; _color-off; exit 1
-                fi
-                 printf "Completed.\n" && portage_synchronized=true
- }
+                else
+                	printf "Completed.\n" && portage_synchronized=true
+		fi
+}
+
 # START
 
 _self-update
@@ -123,7 +120,7 @@ _self-update
 _color-wht; printf "Removing emerge resume history:\n"; _color-off
 emaint --fix cleanresume
 
-portage_synchronizedd=false
+portage_synchronized=false
 _color-wht; printf "Sync Portage now? (y/N): "; _color-off
 read answer
 
