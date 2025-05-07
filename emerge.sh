@@ -77,12 +77,12 @@ function _update_packages {
         if [ "${update}" == "true" ]; then
                 printf "Updating ${package}: "
                 _enable_distcc
-                emerge --ask=n --update --with-bdeps=y --oneshot "${1}"
+                emerge --ask=n --update --deep --newuse --with-bdeps=y --changed-deps=y --oneshot "${1}"
                 if [[ "$?" -ne "0" ]]; then
                         _color-red; printf "Updating package(s) ${1} FAILED!\n"; _color-off
                         _color-wht; printf "Updating package(s) ${1}: "; _color-off
                         _disable_distcc
-                        emerge --ask=n --update --with-bdeps=y --oneshot "${1}"
+                        emerge --ask=n --update --deep --newuse --with-bdeps=y --changed-deps=y --oneshot "${1}"
                         if [[ "$?" -ne "0" ]]; then _color-red; printf "Updating package(s) ${1} FAILED!\n"; exit 1; else updated=yes; fi
                 else
                         updated=yes
