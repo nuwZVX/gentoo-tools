@@ -38,8 +38,8 @@ function _enable_distcc {
 }
 
 function _emerge_world {
-        emerge --ask=y --verbose --verbose-conflicts --update --deep --newuse --backtrack=10000 --autounmask=y --autounmask-write=y --autounmask-keep-masks=y --autounmask-use=y --autounmask-backtrack=y --autounmask-keep-keywords=y --keep-going @world
-        emerge_rc=$?
+        emerge --ask=y --verbose --verbose-conflicts --update --deep --newuse --with-bdeps=y --changed-deps=y --backtrack=10000 --autounmask=y --autounmask-write=y --autounmask-keep-masks=y --autounmask-use=y --autounmask-backtrack=y --autounmask-keep-keywords=y --keep-going @world
+	emerge_rc=$?
         return ${emerge_rc}
 }
 
