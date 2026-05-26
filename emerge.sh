@@ -43,6 +43,16 @@ function _emerge_world {
         return ${emerge_rc}
 }
 
+function _emerge_depclean {
+set -o pipefail
+script -qefc "emerge --ask=y --depclean" /dev/null | grep --line-buffered -vE '^[[:space:]].*|^$'
+RC=$?
+set +o pipefail
+if [[ ${RC} -ne 0 ]]; then
+    exit 1
+fi
+}
+
 function _resume_emerge {
 	loop=0
         while [ ${emerge_rc} -ne 0 ] && [ ${loop} -le 10 ]; do
@@ -175,7 +185,8 @@ if [[ ${emerge_rc} -ne 0 ]]; then
         if [[ ${emerge_rc} -ne 0 ]]; then _color-red; printf "Updating @world (no distcc)  FAILED!\n"; _color-off; exit 1; fi
 fi
 
-emerge --ask=y --depclean || exit 1
+_emerge_depclean
+
 emerge -v1 --keep-going @preserved-rebuild || exit 1
 
 if [ ! -f /usr/sbin/perl-cleaner ]; then
@@ -184,7 +195,7 @@ if [ ! -f /usr/sbin/perl-cleaner ]; then
 fi
 perl-cleaner --all
 
-emerge --ask=y --depclean || exit 1
+_emerge_depclean
 
 if [ ! -f /usr/bin/revdep-rebuild ]; then
     printf "Gentoolkit not found. Installing it.\n"
