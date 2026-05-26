@@ -1,7 +1,24 @@
 #!/bin/bash
+set -euo pipefail
 
-#sed -i "s/.*CONFIG_LOCALVERSION=.*/CONFIG_LOCALVERSION=\"-`date "+%Y%m%d"`\"/g" /usr/src/linux/.config
+eselect kernel list
+printf "Which kernel version to use? "
+read -r answer
 
-genkernel all && grub-mkconfig -o /boot/grub/grub.cfg
+eselect kernel set "${answer}"
 
-ls -la /boot
+CONFIG=/tmp/mykernel.config
+
+zcat /proc/config.gz > "${CONFIG}"
+
+if grep -q '^CONFIG_LOCALVERSION=' "${CONFIG}"; then
+    sed -i "s/^CONFIG_LOCALVERSION=.*/CONFIG_LOCALVERSION=\"-$(date +%Y%m%d)\"/" "${CONFIG}"
+else
+    echo "CONFIG_LOCALVERSION=\"-$(date +%Y%m%d)\"" >> "${CONFIG}"
+fi
+
+genkernel --kernel-config="${CONFIG}" all
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+ls -lah /boot

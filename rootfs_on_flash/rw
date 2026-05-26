@@ -1,0 +1,13 @@
+#!/bin/bash
+
+lockfile=$(mktemp --suffix=_rw.lock)
+
+trap "rm ${lockfile} 2>/dev/null; exit" 0 1 2 3 9 15
+
+sudo mount -o remount,rw /
+bash -c "$*"
+RC=$?
+if [ "`ls -1 /tmp/tmp.*_rw.lock 2>/dev/null | xargs`" == "${lockfile}" ]; then
+	sync; sudo mount -o remount,ro /
+fi
+exit $RC
