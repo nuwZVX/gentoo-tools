@@ -20,5 +20,6 @@ fi
 genkernel --kernel-config="${CONFIG}" all
 
 grub-mkconfig -o /boot/grub/grub.cfg
+grub-install
 
 ls -lah /boot
