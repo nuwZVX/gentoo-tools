@@ -38,7 +38,7 @@ function _enable_distcc {
 }
 
 function _emerge_world {
-        emerge --ask=y --verbose --verbose-conflicts --update --deep --newuse --with-bdeps=y --changed-deps=y --backtrack=10000 --autounmask=y --autounmask-write=y --autounmask-keep-masks=y --autounmask-use=y --autounmask-backtrack=y --autounmask-keep-keywords=y --keep-going @world
+        emerge --ask=y --verbose --verbose-conflicts --update --deep --newuse --with-bdeps=y --changed-deps=y --backtrack=10000 --autounmask=y --autounmask-write=n --autounmask-keep-masks=y --autounmask-use=y --autounmask-backtrack=y --autounmask-keep-keywords=y --keep-going @world
 	emerge_rc=$?
         return ${emerge_rc}
 }
@@ -57,8 +57,8 @@ function _resume_emerge {
 
 function _update_packages {
         update=false
-        for package in $(echo ${1}); do
-        pkg_status=`eix "${package}" | grep "${package}$" | awk -F'[' '{print $2}' | awk -F']' '{print $1}'`
+        for package in "$@"; do
+	pkg_status=`eix "${package}" | grep "${package}$" | awk -F'[' '{print $2}' | awk -F']' '{print $1}'`
         case "${pkg_status}" in
                 'U'|'U?'|'?' )
                 _color-wht; printf "Package ${package} can be updated.\n"; _color-off
@@ -140,7 +140,7 @@ _update_packages sys-apps/portage
 
 # Check if gcc should be updated
 _update_packages sys-devel/gcc
-if [[ "${updated}" -eq "yes" ]]; then
+if [[ "${updated}" == "yes" ]]; then
         if  [ `gcc-config -l | wc -l` -ne 1 ]; then
 	_color-wht; printf "GCC version select: \n"; _color-off
         gcc-config -l
@@ -175,7 +175,6 @@ if [[ ${emerge_rc} -ne 0 ]]; then
         if [[ ${emerge_rc} -ne 0 ]]; then _color-red; printf "Updating @world (no distcc)  FAILED!\n"; _color-off; exit 1; fi
 fi
 
-#emerge --depclean | egrep --line-buffered -v "^ .* pulled in by:$|^ .* requires " | uniq -u
 emerge --ask=y --depclean || exit 1
 emerge -v1 --keep-going @preserved-rebuild || exit 1
 
