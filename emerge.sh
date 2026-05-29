@@ -46,7 +46,7 @@ function _emerge_world {
 function _emerge_depclean {
 set -o pipefail
 # This abomination filters out a emerge --depclean spam
-script -qefc "emerge --ask=y --depclean" /dev/null | grep --line-buffered -vE '^[[:space:]].* pulled in by:$|^[[:space:]].* requires .*$|^$'
+script -qefc "emerge --ask=y --depclean" /dev/null | grep --line-buffered -vE '^[[:space:]].* pulled in by:.*$|^[[:space:]].* requires .*$|^$'
 RC=$?
 set +o pipefail
 if [[ ${RC} -ne 0 ]]; then
