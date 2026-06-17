@@ -52,7 +52,7 @@ set +o pipefail
 if [[ ${RC} -ne 0 ]]; then
     exit 1
 fi
-set -i pipefail
+set -o pipefail
 }
 
 function _resume_emerge {
